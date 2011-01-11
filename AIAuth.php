@@ -4,8 +4,8 @@
 * Add this to the bottom of LocalSettings.php:
 * require_once( "$IP/extensions/artcloud-mediawiki/AIAuth.php" );
 * $wgAuth = new AIAuthPlugin();
-* $djangoAuthURL = "http://127.0.0.1:8000/api/front/auth/";
-* $djangoExistsURL = "http://127.0.0.1:8000/api/front/exists/";
+* $djangoAuthURL = "http://127.0.0.1/api/front/auth/";
+* $djangoExistsURL = "http://127.0.0.1/api/front/exists/";
 */
 
 class AIAuthPlugin extends AuthPlugin {
@@ -20,7 +20,6 @@ class AIAuthPlugin extends AuthPlugin {
 	public function userExists( $username ) {
 		global $djangoExistsURL;
 		$cleaned_username = AIAuthPlugin::cleanUsername($username);
-		print "Cleaned username: $cleaned_username";
 		$r = Http::get($djangoExistsURL . '?username=' . $cleaned_username);
 		if($r == false){
 			return false;
@@ -40,7 +39,6 @@ class AIAuthPlugin extends AuthPlugin {
 	 */
 	public function authenticate( $username, $password ) {
 		global $djangoAuthURL;
-		print 'ooo';
 		$cleaned_username = AIAuthPlugin::cleanUsername($username);
 		$r = Http::post($djangoAuthURL, array('postData' => wfArrayToCGI(array('username'=>$cleaned_username, 'password'=>$password))));
 		if($r == false){
@@ -143,7 +141,6 @@ class AIAuthPlugin extends AuthPlugin {
 	 * @param $user User
 	 */
 	public function getUserInstance( User &$user ) {
-		print 'um...';
 		return new AuthPluginUser( $user );
 	}
 }
